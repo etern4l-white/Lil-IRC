@@ -4,18 +4,37 @@ import json
 import threading
 import socket
 
-
+def format_messages_to_display(stdscr, messages_queue):
+    rows, cols = stdscr.getmaxyx()
+    temp_list = [f"{message['user']} {message['message']}" for message in messages_queue]
+    displayed_messages = []
+    for message in temp_list:
+        if len(message) >= cols:
+            i = 0
+            while i < -(-len(message)//cols):
+                displayed_messages.append(message[i*cols:(i+1)*cols])
+                i+=1
+        else:
+            displayed_messages.append(message)
+    return displayed_messages
+    
 def display_dialog(stdscr, messages_queue):
     rows, cols = stdscr.getmaxyx()
+    messages_queue = format_messages_to_display(stdscr, messages_queue)
     # displayed_queue = messages_queue[-(len(messages_queue)//(rows-1) + len(messages_queue)%(rows-1) + 1):]
     for i, message_data in enumerate(messages_queue[-(rows-1):]):
+        """keep this
         if message_data['user'] == "Me":
             style = curses.color_pair(1) | curses.A_BOLD
         else:
             style = curses.color_pair(2)
+        """
         stdscr.addstr(i%rows, 0, ' '*cols)
+        stdscr.addstr(i%rows, 0, message_data)  
+        """keep this
         stdscr.addstr(i%rows, 0, f"{message_data['user']}",  style)
-        stdscr.addstr(i%rows, len(f"{message_data['user']}") + 1, f"{message_data['message']}")
+        stdscr.addstr(i%rows, len(f"{message_data['user']}") + 1, f"{message_data['message']}")        
+        """
     stdscr.refresh()
 
 def add_message_to_dialog(stdscr, message, messages_queue):
