@@ -28,8 +28,9 @@ Implementing a terminal-based IRC + concurrent connections + auth
     - [ ] upload file from client side, via file path.
     - [ ] download file on server, idk how I'll implement this on other clients' sides.
 - [x] Make the code in functions...
-- [ ] standardize format between client and server.
+- [x] standardize format between client and server.
 - [ ] handle concurrent connections (mutltiple clients)
 - [ ] broadcast messages
 - [ ] identify users (basic register/login logic)
 - [ ] fix connection bugs, log errors/bugs for servers and clients.
+- [ ] make the code OOP, you actually need that lol...
