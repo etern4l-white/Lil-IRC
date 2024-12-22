@@ -13,6 +13,7 @@ def display_dialog(stdscr, messages_queue):
             style = curses.color_pair(1) | curses.A_BOLD
         else:
             style = curses.color_pair(2)
+        stdscr.addstr(i%rows, 0, ' '*cols)
         stdscr.addstr(i%rows, 0, f"{message_data['user']}",  style)
         stdscr.addstr(i%rows, len(f"{message_data['user']}") + 1, f"{message_data['message']}")
     stdscr.refresh()
@@ -60,7 +61,7 @@ def get_message_input(stdscr, prompt = f"Message: >>> "):
             message_pointer+=1
             message_characters.append(key)
         message_output = ''.join(message_characters)
-        # stdscr.addstr(rows-1, 0, " "*(cols-1))
+        stdscr.addstr(rows-1, 0, " "*(cols-1))
         stdscr.addstr(rows-1, 0, prompt + message_output)
     return ''.join(message_characters)
 
@@ -87,10 +88,6 @@ def handle_sending(stdscr, client_socket, messages_queue):
         display_dialog(stdscr, messages_queue)
         client_socket.sendall(json.dumps(message_data, ensure_ascii=False).encode())
 
-def get_host(stdscr):
-    host = get_message_input(stdscr, "Enter server's IP")
-    return host
-
 def debug(something):
     with open("tt.log", 'a') as f:
         f.write(str(something) + '\n')
@@ -104,9 +101,10 @@ def main(stdscr):
         
         
         with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as client_socket:
-            host = get_host(stdscr)
-            debug(host)
-            client_socket.connect((host, 3141))
+            host = get_message_input(stdscr, "Enter server's IP >>> ")
+            port = get_message_input(stdscr, "Enter Port >>> ")
+            # debug(host)
+            client_socket.connect((host, int(port)))
             thread_receiving = threading.Thread(target=handle_recieving, args=((stdscr, client_socket,messages_queue)))
             thread_sending = threading.Thread(target=handle_sending, args=((stdscr, client_socket, messages_queue)))
             
