@@ -13,6 +13,7 @@ def autistic_escaping(message_to_add, message):
     return "\\027181813141" + message_to_add[message_to_add.index(message['user']):message_to_add.index(message['user']) + len(message['user'])] + "\\027181823141" + message_to_add[message_to_add.index(message['user']) + len(message['user']):]
 
 def format_messages_to_display(stdscr, messages_queue):
+    """used in display_messages, only formats messages"""
     rows, cols = stdscr.getmaxyx()
     temp_list = [f"{message['user']} {message['message']}" for message in messages_queue]
     displayed_messages = []
@@ -52,6 +53,7 @@ def display_dialog(stdscr, messages_queue):
     stdscr.refresh()
 
 def add_message_to_dialog(stdscr, message, messages_queue):
+    """adds current message from user input"""
     rows, cols = stdscr.getmaxyx()
     if len(message) == 0:
         return
@@ -71,7 +73,8 @@ def display_error(stdscr, e):
     stdscr.addstr(0,0, traceback.format_exc())
     stdscr.refresh()
 
-def get_message_input(stdscr, prompt = f"Message: >>> "):
+def get_message_input(stdscr, prompt = f"Message: >>> ") -> str:
+    """lets user input their message"""
     rows, cols = stdscr.getmaxyx()
     stdscr.addstr(rows-1, 0, " "*(cols-1)) # clearing the input field
     stdscr.addstr(rows-1, 0, prompt)
@@ -103,7 +106,8 @@ def initiate_colors():
     curses.init_pair(1, curses.COLOR_GREEN, -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
 
-def handle_recieving(stdscr, client_socket, messages_queue, client):
+def handle_recieving(stdscr, client_socket, messages_queue):
+    """receives messages comming from socket"""
     while True:
         data = client_socket.recv((1024**2)//4) # 256 kb
         messages_queue.append(json.loads(data.decode()))
@@ -154,3 +158,4 @@ def main(stdscr):
     stdscr.refresh()
 
 curses.wrapper(main)
+
